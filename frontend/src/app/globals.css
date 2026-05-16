@@ -1,0 +1,19 @@
+/* src/app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { font-size: 14px; }
+  * { box-sizing: border-box; }
+  body { direction: rtl; }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+  .dark ::-webkit-scrollbar-thumb { background: #374151; }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+}

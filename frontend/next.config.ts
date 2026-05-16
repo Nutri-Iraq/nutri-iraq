@@ -1,0 +1,11 @@
+// next.config.ts
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  images: {
+    domains: ['localhost', 'api.nutri-iraq.iq'],
+  },
+}
+
+export default nextConfig
