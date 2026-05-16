@@ -1,5 +1,4 @@
 'use client'
-// src/app/providers.tsx
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'react-hot-toast'
 import { useState } from 'react'
@@ -15,7 +14,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       {children}
       <Toaster
-        position="bottom-left"
+        position='bottom-left'
         toastOptions={{
           style: { fontSize: 13, direction: 'rtl' },
           success: { style: { background: '#EAF3DE', color: '#3B6D11' } },
