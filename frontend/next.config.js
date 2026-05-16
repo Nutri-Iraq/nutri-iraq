@@ -1,11 +1,7 @@
-// next.config.ts
-import type { NextConfig } from 'next'
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: true,
-  images: {
-    domains: ['localhost', 'api.nutri-iraq.iq'],
-  },
+  output: 'standalone',
 }
 
-export default nextConfig
+module.exports = nextConfig
