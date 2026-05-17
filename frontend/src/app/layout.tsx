@@ -1,14 +1,18 @@
-'use client'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Toaster } from 'react-hot-toast'
-import { useState } from 'react'
+import type { Metadata } from 'next'
+import { Providers } from './providers'
+import './globals.css'
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient())
+export const metadata: Metadata = {
+  title: 'نيوتري عراق',
+  description: 'نظام إدارة مركز التغذية',
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-      <Toaster position="bottom-left" />
-    </QueryClientProvider>
+    <html lang="ar" dir="rtl">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
   )
 }
