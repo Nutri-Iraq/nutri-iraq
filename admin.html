@@ -175,9 +175,17 @@ document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
 
+const SB_BASE='https://laqiqcyiztvpqctxnxvx.supabase.co/rest/v1';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhcWlxY3lpenR2cHFjdHhueHZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxNDMzOTYsImV4cCI6MjA5NDcxOTM5Nn0.P5OI78c0rpuubOyw4DhQgcCyh11WDXghBoGTd73Bw-8';
+const SB_H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+
 async function api(action,data={}){
-  const r=await fetch('/.netlify/functions/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,data})});
-  return r.json();
+  if(action==='getSubs'){const r=await fetch(SB_BASE+'/subscribers?order=created_at.desc&select=*',{headers:SB_H});return r.json();}
+  if(action==='getEntries'){const r=await fetch(SB_BASE+'/entries?select=*',{headers:SB_H});return r.json();}
+  if(action==='approve'){await fetch(SB_BASE+'/subscribers?id=eq.'+data.id,{method:'PATCH',headers:{...SB_H,'Prefer':'return=minimal'},body:JSON.stringify({status:'approved',password:data.password})});return {ok:true};}
+  if(action==='reject'){await fetch(SB_BASE+'/subscribers?id=eq.'+data.id,{method:'PATCH',headers:{...SB_H,'Prefer':'return=minimal'},body:JSON.stringify({status:'rejected'})});return {ok:true};}
+  if(action==='saveEntry'){await fetch(SB_BASE+'/entries?on_conflict=sub_id,date',{method:'POST',headers:{...SB_H,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify(data)});return {ok:true};}
+  return {ok:false};
 }
 
 async function loadData(){
