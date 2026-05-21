@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shine — لوحة الكوتش</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--rose:#e8496a;--rose2:#f472b6;--dark:#0f0a0d;--card:#1e1218;--border:rgba(232,73,106,0.18);--text:#f5f0f2;--muted:#a08090;}
+body{background:var(--dark);color:var(--text);font-family:'Tajawal',sans-serif;min-height:100vh;}
+#lockScreen{position:fixed;inset:0;background:var(--dark);z-index:1000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;}
+.lock-input{padding:0.85rem 1.2rem;background:rgba(255,255,255,0.05);border:1.5px solid var(--border);border-radius:14px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:1rem;text-align:center;outline:none;width:260px;letter-spacing:3px;}
+.lock-input:focus{border-color:var(--rose);}
+.lock-btn{padding:0.85rem 2rem;background:linear-gradient(135deg,#e8496a,#f472b6);color:white;border:none;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;}
+.lock-err{color:#f87171;font-size:0.82rem;display:none;}
+#dashboard{display:none;}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.brand{font-family:'Playfair Display',serif;font-size:1.3rem;background:linear-gradient(135deg,#e8496a,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.btn-sm{padding:0.45rem 0.9rem;border-radius:10px;font-family:'Tajawal',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;border:none;}
+.btn-primary{background:linear-gradient(135deg,#e8496a,#f472b6);color:white;}
+.btn-green{background:rgba(34,197,94,0.2);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}
+.btn-red{background:rgba(232,73,106,0.15);color:#f87171;border:1px solid rgba(232,73,106,0.3);}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.main{padding:1.5rem;max-width:1100px;margin:0 auto;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.8rem;margin-bottom:1.5rem;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1rem;text-align:center;}
+.stat-num{font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,#e8496a,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-label{font-size:0.7rem;color:var(--muted);}
+.section-title{font-size:0.95rem;font-weight:800;color:var(--rose);margin-bottom:0.8rem;}
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:1.5rem;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:rgba(232,73,106,0.08);}
+th{padding:0.7rem 0.9rem;font-size:0.75rem;font-weight:800;color:var(--rose);text-align:right;}
+td{padding:0.65rem 0.9rem;font-size:0.82rem;border-top:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.badge{padding:0.2rem 0.55rem;border-radius:999px;font-size:0.68rem;font-weight:800;}
+.badge-pending{background:rgba(245,158,11,0.15);color:#fbbf24;}
+.badge-approved{background:rgba(34,197,94,0.15);color:#22c55e;}
+.badge-rejected{background:rgba(232,73,106,0.15);color:#f87171;}
+.badge-green{background:rgba(34,197,94,0.15);color:#22c55e;}
+.badge-blue{background:rgba(59,130,246,0.15);color:#60a5fa;}
+.badge-yellow{background:rgba(245,158,11,0.15);color:#fbbf24;}
+.badge-red{background:rgba(232,73,106,0.15);color:#f87171;}
+
+/* موافقة */
+.approve-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+.approve-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:1.5rem;max-width:380px;width:100%;}
+.modal-title{font-weight:800;font-size:1rem;color:var(--rose);margin-bottom:1rem;}
+.fi{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.8rem;}
+.fi label{font-size:0.75rem;color:var(--muted);font-weight:700;}
+.fi input{padding:0.65rem 0.9rem;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:0.9rem;outline:none;}
+.fi input:focus{border-color:var(--rose);}
+
+/* تفاصيل */
+.sub-detail{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1.2rem;margin-bottom:1rem;display:none;}
+.entry-form{background:rgba(232,73,106,0.04);border:1px solid var(--border);border-radius:14px;padding:1rem;margin-top:0.8rem;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0.6rem;}
+.fii{display:flex;flex-direction:column;gap:0.25rem;}
+.fii label{font-size:0.68rem;color:var(--muted);font-weight:700;}
+.fii input,.fii select{padding:0.5rem 0.7rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:0.82rem;outline:none;}
+.fii select option{background:#1a0f14;}
+.entries-list{display:flex;flex-direction:column;gap:0.5rem;margin-top:0.8rem;}
+.entry-row{background:rgba(255,255,255,0.03);border-radius:10px;padding:0.6rem 0.9rem;font-size:0.78rem;display:flex;gap:0.8rem;flex-wrap:wrap;align-items:center;}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0.7rem 1.2rem;font-size:0.85rem;font-weight:700;z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div id="lockScreen">
+  <div style="font-size:3rem;">🔐</div>
+  <div style="font-family:'Playfair Display',serif;font-size:1.8rem;background:linear-gradient(135deg,#e8496a,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">SHINE Admin</div>
+  <input type="password" class="lock-input" id="passInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPass()">
+  <button class="lock-btn" onclick="checkPass()">دخول</button>
+  <div class="lock-err" id="lockErr">كلمة السر غير صحيحة ⚠️</div>
+</div>
+
+<div id="dashboard">
+  <div class="topbar">
+    <div class="brand">✨ SHINE Admin</div>
+    <div style="display:flex;gap:0.7rem;align-items:center;">
+      <button class="btn-sm btn-outline" onclick="loadData()">🔄 تحديث</button>
+      <button class="btn-sm btn-primary" onclick="window.open('index.html','_blank')">📱 صفحة التسجيل</button>
+      <button class="btn-sm btn-primary" onclick="window.open('portal.html','_blank')">👤 بوابة المشتركة</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-num" id="statTotal">—</div><div class="stat-label">إجمالي المشتركات</div></div>
+      <div class="stat-card"><div class="stat-num" id="statPending">—</div><div class="stat-label">طلبات بالانتظار</div></div>
+      <div class="stat-card"><div class="stat-num" id="statApproved">—</div><div class="stat-label">مشتركات نشطة</div></div>
+      <div class="stat-card"><div class="stat-num" id="statToday">—</div><div class="stat-label">سجّلن اليوم</div></div>
+    </div>
+
+    <!-- طلبات الانتظار -->
+    <div id="pendingSection">
+      <div class="section-title">⏳ طلبات بالانتظار</div>
+      <div class="table-wrap">
+        <table><thead><tr><th>#</th><th>الاسم</th><th>الهاتف</th><th>الوزن</th><th>الهدف</th><th>البرنامج</th><th>التاريخ</th><th>إجراء</th></tr></thead>
+        <tbody id="pendingTable"><tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--muted);">⏳ جاري التحميل...</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- المشتركات النشطة -->
+    <div class="section-title">✅ المشتركات النشطات</div>
+    <div class="table-wrap">
+      <table><thead><tr><th>#</th><th>الاسم</th><th>الهاتف</th><th>الوزن</th><th>الهدف</th><th>البرنامج</th><th>الانضمام</th><th>الإدخالات</th><th>إجراء</th></tr></thead>
+      <tbody id="approvedTable"><tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--muted);">⏳ جاري التحميل...</td></tr></tbody></table>
+    </div>
+
+    <!-- تفاصيل مشتركة -->
+    <div id="subDetail" class="sub-detail">
+      <div class="section-title" id="detailTitle"></div>
+      <div class="entry-form">
+        <div style="font-size:0.82rem;font-weight:800;color:var(--rose);margin-bottom:0.7rem;">➕ إضافة إدخال يدوي</div>
+        <input type="hidden" id="activeSubId">
+        <div class="form-grid">
+          <div class="fii"><label>التاريخ</label><input type="date" id="eDate"></div>
+          <div class="fii"><label>الوزن (كغ)</label><input type="number" id="eWeight" step="0.1"></div>
+          <div class="fii"><label>الماء (لتر)</label><input type="number" id="eWater" step="0.1"></div>
+          <div class="fii"><label>الالتزام</label><select id="eCommit"><option value="ممتاز">ممتاز</option><option value="جيد">جيد</option><option value="متوسط">متوسط</option><option value="ضعيف">ضعيف</option></select></div>
+          <div class="fii"><label>الفطور</label><input type="text" id="eBreakfast"></div>
+          <div class="fii"><label>الغداء</label><input type="text" id="eLunch"></div>
+          <div class="fii"><label>العشاء</label><input type="text" id="eDinner"></div>
+          <div class="fii"><label>السناك</label><input type="text" id="eSnack"></div>
+          <div class="fii"><label>النشاط</label><input type="text" id="eSport"></div>
+        </div>
+        <div style="margin-top:0.7rem;">
+          <button class="btn-sm btn-primary" onclick="saveEntry()" style="padding:0.6rem 1.2rem;">💾 حفظ</button>
+        </div>
+      </div>
+      <div style="margin-top:1rem;font-size:0.82rem;font-weight:800;color:var(--muted);">📋 سجل الإدخالات</div>
+      <div class="entries-list" id="entriesList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- موافقة modal -->
+<div class="approve-modal" id="approveModal">
+  <div class="approve-box">
+    <div class="modal-title">✅ الموافقة على الطلب</div>
+    <div id="approveSubName" style="font-size:0.85rem;color:var(--muted);margin-bottom:1rem;"></div>
+    <input type="hidden" id="approveSubId">
+    <div class="fi">
+      <label>كلمة السر للمشتركة</label>
+      <input type="text" id="approvePass" placeholder="مثال: 12345678" id="approvePass">
+    </div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:1rem;">سترسلين هذه الكلمة للمشتركة مع رابط بوابتها</div>
+    <div style="display:flex;gap:0.7rem;">
+      <button class="btn-sm btn-green" onclick="doApprove()" style="flex:1;padding:0.7rem;">✅ موافقة</button>
+      <button class="btn-sm btn-red" onclick="doReject()" style="padding:0.7rem 1rem;">❌ رفض</button>
+      <button class="btn-sm btn-outline" onclick="closeApproveModal()" style="padding:0.7rem 1rem;">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PASS='shine2026';
+let allSubs=[],allEntries=[],selectedSubId=null;
+
+function checkPass(){
+  if(document.getElementById('passInput').value===PASS){
+    document.getElementById('lockScreen').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    loadData();
+  }else{
+    document.getElementById('lockErr').style.display='block';
+    document.getElementById('passInput').value='';
+  }
+}
+document.getElementById('passInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPass();});
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
+
+async function api(action,data={}){
+  const r=await fetch('/.netlify/functions/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,data})});
+  return r.json();
+}
+
+async function loadData(){
+  try{
+    const [r1,r2]=await Promise.all([
+      fetch('/.netlify/functions/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getSubs'})}),
+      fetch('/.netlify/functions/admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'getEntries'})})
+    ]);
+    allSubs=await r1.json()||[];
+    allEntries=await r2.json()||[];
+    console.log('Subs loaded:',allSubs.length, allSubs.map(s=>s.name+':'+s.status));
+    renderStats();
+    renderPending();
+    renderApproved();
+  }catch(e){console.error(e);toast('⚠️ خطأ في التحميل: '+e.message);}
+}
+
+function renderStats(){
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('statTotal').textContent=allSubs.length;
+  document.getElementById('statPending').textContent=allSubs.filter(s=>s.status==='pending').length;
+  document.getElementById('statApproved').textContent=allSubs.filter(s=>s.status==='approved').length;
+  document.getElementById('statToday').textContent=new Set(allEntries.filter(e=>e.date===today).map(e=>e.sub_id)).size;
+}
+
+function renderPending(){
+  const pending=allSubs.filter(s=>!s.status||s.status==='pending');
+  const tbody=document.getElementById('pendingTable');
+  document.getElementById('pendingSection').style.display='block';
+  tbody.innerHTML=pending.length?pending.map((s,i)=>`
+    <tr>
+      <td>${i+1}</td><td><strong>${s.name}</strong></td>
+      <td style="direction:ltr;">${s.phone||'—'}</td>
+      <td>${s.weight||'—'} كغ</td><td>${s.target||'—'} كغ</td>
+      <td>${s.program||'—'}</td><td>${fmtDate(s.date)}</td>
+      <td><button class="btn-sm btn-green" onclick="openApproveModal('${s.id}','${s.name.replace(/'/g,"\\'")}')">✅ موافقة / رفض</button></td>
+    </tr>`).join(''):'<tr><td colspan="8" style="text-align:center;padding:1.5rem;color:var(--muted);">لا توجد طلبات بالانتظار</td></tr>';
+}
+
+function renderApproved(){
+  const approved=allSubs.filter(s=>s.status==='approved');
+  const tbody=document.getElementById('approvedTable');
+  tbody.innerHTML=approved.length?approved.map((s,i)=>{
+    const cnt=allEntries.filter(e=>e.sub_id===s.id).length;
+    return `<tr>
+      <td>${i+1}</td><td><strong>${s.name}</strong></td>
+      <td style="direction:ltr;">${s.phone||'—'}</td>
+      <td>${s.weight||'—'} كغ</td><td>${s.target||'—'} كغ</td>
+      <td>${s.program||'—'}</td><td>${fmtDate(s.date)}</td>
+      <td>${cnt} يوم</td>
+      <td><button class="btn-sm btn-primary" onclick="openDetail('${s.id}')">تفاصيل</button></td>
+    </tr>`;
+  }).join(''):'<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--muted);">لا توجد مشتركات نشطة بعد — وافقي على طلبات الانتظار أعلاه</td></tr>';
+}
+
+function openApproveModal(id,name){
+  document.getElementById('approveSubId').value=id;
+  document.getElementById('approveSubName').textContent='المشتركة: '+name;
+  document.getElementById('approvePass').value=Math.random().toString(36).slice(-8);
+  document.getElementById('approveModal').style.display='flex';
+}
+function closeApproveModal(){document.getElementById('approveModal').style.display='none';}
+
+async function doApprove(){
+  const id=document.getElementById('approveSubId').value;
+  const pass=document.getElementById('approvePass').value.trim();
+  if(!pass){toast('⚠️ أدخلي كلمة سر');return;}
+  const r=await api('approve',{id,password:pass});
+  if(r.ok){toast('✅ تم قبول المشتركة — كلمة السر: '+pass);closeApproveModal();await loadData();}
+  else toast('⚠️ خطأ في الموافقة');
+}
+
+async function doReject(){
+  const id=document.getElementById('approveSubId').value;
+  const r=await api('reject',{id});
+  if(r.ok){toast('تم رفض الطلب');closeApproveModal();await loadData();}
+}
+
+function openDetail(subId){
+  selectedSubId=subId;
+  const sub=allSubs.find(s=>s.id===subId);
+  document.getElementById('activeSubId').value=subId;
+  document.getElementById('eDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('detailTitle').textContent=`👤 ${sub.name} — ${sub.weight} كغ ← ${sub.target} كغ`;
+  const entries=allEntries.filter(e=>e.sub_id===subId).sort((a,b)=>b.date.localeCompare(a.date));
+  const colors={ممتاز:'badge-green',جيد:'badge-blue',متوسط:'badge-yellow',ضعيف:'badge-red'};
+  document.getElementById('entriesList').innerHTML=entries.length?entries.map(e=>`
+    <div class="entry-row">
+      <span style="color:var(--muted);min-width:75px;">${fmtDate(e.date)}</span>
+      ${e.weight?`<span>⚖️ ${e.weight}كغ</span>`:''}
+      ${e.water?`<span>💧 ${e.water}ل</span>`:''}
+      <span class="badge ${colors[e.commit]||''}">${e.commit||'—'}</span>
+      ${e.sport?`<span>🏃 ${e.sport}</span>`:''}
+    </div>`).join(''):'<div style="text-align:center;color:var(--muted);padding:1rem;font-size:0.82rem;">لا توجد إدخالات</div>';
+  const d=document.getElementById('subDetail');
+  d.style.display='block';
+  d.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function saveEntry(){
+  const subId=document.getElementById('activeSubId').value;
+  const date=document.getElementById('eDate').value;
+  if(!subId||!date){toast('⚠️ حدث خطأ');return;}
+  const entry={sub_id:subId,date,
+    weight:parseFloat(document.getElementById('eWeight').value)||null,
+    water:parseFloat(document.getElementById('eWater').value)||null,
+    commit:document.getElementById('eCommit').value,
+    breakfast:document.getElementById('eBreakfast').value.trim()||null,
+    lunch:document.getElementById('eLunch').value.trim()||null,
+    dinner:document.getElementById('eDinner').value.trim()||null,
+    snack:document.getElementById('eSnack').value.trim()||null,
+    sport:document.getElementById('eSport').value.trim()||null,
+  };
+  const r=await api('saveEntry',entry);
+  if(r.ok){toast('✅ تم الحفظ');await loadData();openDetail(subId);}
+  else toast('⚠️ خطأ في الحفظ');
+}
+</script>
+</body>
+</html>

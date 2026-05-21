@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>أشرقي — سجّلي معنا</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--rose:#e8496a;--rose2:#f472b6;--dark:#0f0a0d;--card:#1e1218;--border:rgba(232,73,106,0.18);--text:#f5f0f2;--muted:#a08090;}
+body{background:var(--dark);color:var(--text);font-family:'Tajawal',sans-serif;min-height:100vh;overflow-x:hidden;}
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.12;animation:orbFloat 8s ease-in-out infinite;}
+.orb1{width:500px;height:500px;background:#e8496a;top:-100px;right:-100px;}
+.orb2{width:400px;height:400px;background:#7c3aed;bottom:-80px;left:-80px;animation-delay:3s;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,-20px)}}
+.container{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:2rem 1.2rem 4rem;}
+.header{text-align:center;padding:2.5rem 0 2rem;}
+.logo-icon{font-size:3rem;display:block;margin-bottom:0.5rem;}
+.logo-en{font-family:'Playfair Display',serif;font-size:2.8rem;background:linear-gradient(135deg,#e8496a,#f472b6,#fbbf24);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:3px;}
+.logo-ar{color:var(--muted);font-size:0.9rem;margin-top:0.2rem;letter-spacing:2px;}
+.tagline{margin-top:1rem;font-size:1rem;color:rgba(255,255,255,0.6);line-height:1.6;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:2rem 1.5rem;margin-bottom:1.2rem;}
+.card-title{font-size:1rem;font-weight:800;color:var(--rose);margin-bottom:1.2rem;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+.field{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:0.8rem;}
+.field label{font-size:0.78rem;font-weight:700;color:var(--muted);}
+.field input,.field select,.field textarea{padding:0.75rem 1rem;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:0.92rem;transition:border-color .2s;outline:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--rose);}
+.field textarea{resize:vertical;min-height:80px;}
+.required::after{content:" *";color:var(--rose);}
+.programs{display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem;}
+.prog-btn{padding:0.7rem;border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;background:transparent;color:var(--muted);font-family:'Tajawal',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.prog-btn:hover{border-color:var(--rose);color:var(--rose);}
+.prog-btn.active{background:linear-gradient(135deg,#e8496a,#f472b6);color:white;border-color:transparent;}
+.meals-note{background:rgba(232,73,106,0.06);border:1px solid var(--border);border-radius:14px;padding:1rem;font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;}
+.submit-btn{width:100%;padding:1rem;background:linear-gradient(135deg,#e8496a,#f472b6);color:white;border:none;border-radius:16px;font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;transition:all .25s;box-shadow:0 6px 24px rgba(232,73,106,0.35);}
+.submit-btn:hover{transform:translateY(-2px);}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.success-screen{display:none;text-align:center;padding:3rem 1rem;}
+.success-icon{font-size:4rem;margin-bottom:1rem;}
+.success-title{font-size:1.5rem;font-weight:900;color:var(--rose);margin-bottom:0.5rem;}
+.success-msg{color:var(--muted);line-height:1.7;font-size:0.92rem;}
+.error-msg{color:#f87171;font-size:0.75rem;margin-top:0.2rem;display:none;}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:#1e1218;border:1px solid var(--border);border-radius:14px;padding:0.8rem 1.4rem;font-size:0.85rem;font-weight:700;color:var(--text);box-shadow:0 8px 30px rgba(0,0,0,0.4);z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb orb1"></div><div class="orb orb2"></div></div>
+<div class="container">
+  <div class="header">
+    <span class="logo-icon">✨</span>
+    <div class="logo-en">SHINE</div>
+    <div class="logo-ar">أشرقي</div>
+    <div class="tagline">رحلتكِ نحو الصحة تبدأ هنا<br>سجّلي بياناتكِ وسنتواصل معكِ قريباً 💕</div>
+  </div>
+
+  <!-- شاشة المتابعة -->
+  <div id="followGate">
+    <div class="card" style="text-align:center;padding:2.5rem 1.5rem;">
+      <div style="font-size:3rem;margin-bottom:1rem;">📸</div>
+      <div style="font-size:1.1rem;font-weight:900;color:var(--rose);margin-bottom:0.5rem;">خطوة أولى قبل التسجيل</div>
+      <div style="font-size:0.88rem;color:var(--muted);line-height:1.7;margin-bottom:1.5rem;">
+        تابعي صفحتنا على إنستغرام<br>ثم ارجعي واضغطي <strong style="color:white;">تابعتني ✅</strong>
+      </div>
+      <a href="https://www.instagram.com/shine_nutrition" target="_blank" onclick="window._followClicked=true"
+        style="display:block;padding:0.9rem;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:0.95rem;font-weight:800;text-decoration:none;margin-bottom:0.8rem;">
+        🔗 افتحي صفحتنا على إنستغرام
+      </a>
+      <button onclick="confirmFollow()" id="confirmBtn"
+        style="width:100%;padding:0.9rem;background:rgba(34,197,94,0.15);border:1.5px solid rgba(34,197,94,0.3);color:#22c55e;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:0.95rem;font-weight:800;cursor:pointer;transition:all .2s;opacity:0.5;" disabled>
+        ✅ تابعتني — تكملي التسجيل
+      </button>
+      <div id="followHint" style="font-size:0.72rem;color:var(--muted);margin-top:0.6rem;">افتحي الصفحة أولاً ليتفعل الزر</div>
+    </div>
+  </div>
+  <div id="formSection" style="display:none;">
+    <div class="card">
+      <div class="field"><label class="required">الاسم الكامل</label><input type="text" id="name" placeholder="مثال: ريم الأحمدي"><span class="error-msg" id="nameErr">الاسم مطلوب</span></div>
+      <div class="grid-2">
+        <div class="field"><label>رقم الهاتف</label><input type="tel" id="phone" placeholder="07xxxxxxxxx"></div>
+        <div class="field"><label>العمر</label><input type="number" id="age" placeholder="28"></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>الطول (سم)</label><input type="number" id="height" placeholder="165"></div>
+        <div class="field"><label class="required">الوزن الحالي (كغ)</label><input type="number" id="weight" placeholder="72" step="0.1"></div>
+      </div>
+      <div class="field"><label class="required">الوزن المستهدف (كغ)</label><input type="number" id="target" placeholder="65" step="0.1"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🏃 نوع البرنامج</div>
+      <div class="programs">
+        <button class="prog-btn active" data-prog="تنحيف" onclick="selectProg(this)">🔥 تنحيف</button>
+        <button class="prog-btn" data-prog="ثبات" onclick="selectProg(this)">⚖️ ثبات</button>
+        <button class="prog-btn" data-prog="تسمين" onclick="selectProg(this)">💪 تسمين</button>
+        <button class="prog-btn" data-prog="رياضي" onclick="selectProg(this)">🏃 رياضي</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🍽️ وجباتكِ اليومية</div>
+      <div class="meals-note">ستتمكنين من تسجيل وجباتكِ اليومية بعد قبول طلبكِ 💌</div>
+      <div class="field"><label>ملاحظات إضافية</label><textarea id="notes" placeholder="حساسيات، حالات طبية..."></textarea></div>
+    </div>
+    <button class="submit-btn" onclick="submitForm()" id="submitBtn">✨ أرسلي طلب الانضمام</button>
+  </div>
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">تم استلام طلبكِ!</div>
+    <div class="success-msg">شكراً <span id="successName"></span> 💕<br><br>سيتم التواصل معكِ خلال 24 ساعة ✨</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const SB_URL = '/.netlify/functions/submit';
+let selectedProg = 'تنحيف';
+
+// تفعيل زر التأكيد بعد فتح إنستغرام
+document.addEventListener('visibilitychange', function() {
+  if(!document.hidden && window._followClicked) {
+    const btn  = document.getElementById('confirmBtn');
+    const hint = document.getElementById('followHint');
+    if(btn) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.background = 'rgba(34,197,94,0.2)';
+    }
+    if(hint) hint.textContent = 'ممتاز! الآن اضغطي تابعتني ✅';
+  }
+});
+
+function confirmFollow() {
+  document.getElementById('followGate').style.display   = 'none';
+  document.getElementById('formSection').style.display  = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function selectProg(btn){document.querySelectorAll('.prog-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');selectedProg=btn.dataset.prog;}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+async function submitForm(){
+  const name=document.getElementById('name').value.trim();
+  const weight=document.getElementById('weight').value;
+  const target=document.getElementById('target').value;
+  if(!name){document.getElementById('nameErr').style.display='block';return;}
+  document.getElementById('nameErr').style.display='none';
+  if(!weight||!target){showToast('⚠️ الوزن الحالي والمستهدف مطلوبان');return;}
+  const btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='⏳ جاري الإرسال...';
+  const data={name,phone:document.getElementById('phone').value.trim()||null,age:parseInt(document.getElementById('age').value)||null,height:parseFloat(document.getElementById('height').value)||null,weight:parseFloat(weight),target:parseFloat(target),program:selectedProg,notes:document.getElementById('notes').value.trim()||null,date:new Date().toISOString().split('T')[0]};
+  try{
+    const r=await fetch('/.netlify/functions/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    if(r.status===201||r.ok){
+      document.getElementById('formSection').style.display='none';
+      document.getElementById('successScreen').style.display='block';
+      document.getElementById('successName').textContent=name;
+    }else{
+      const err=await r.text();throw new Error(err);
+    }
+  }catch(e){
+    showToast('⚠️ خطأ: '+e.message);
+    btn.disabled=false;btn.textContent='✨ أرسلي طلب الانضمام';
+  }
+}
+</script>
+</body>
+</html>

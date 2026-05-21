@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>أشرقي — بوابة المشتركة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--rose:#e8496a;--rose2:#f472b6;--dark:#0f0a0d;--card:#1e1218;--border:rgba(232,73,106,0.18);--text:#f5f0f2;--muted:#a08090;}
+body{background:var(--dark);color:var(--text);font-family:'Tajawal',sans-serif;min-height:100vh;}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.1;pointer-events:none;}
+.o1{width:400px;height:400px;background:#e8496a;top:-100px;right:-100px;}
+.o2{width:350px;height:350px;background:#7c3aed;bottom:-80px;left:-80px;}
+
+/* تسجيل دخول */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1.5rem;}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:2rem 1.8rem;width:100%;max-width:400px;}
+.logo{text-align:center;margin-bottom:2rem;}
+.logo-en{font-family:'Playfair Display',serif;font-size:2rem;background:linear-gradient(135deg,#e8496a,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.field{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:1rem;}
+.field label{font-size:0.8rem;font-weight:700;color:var(--muted);}
+.field input{padding:0.75rem 1rem;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:0.95rem;outline:none;transition:border-color .2s;}
+.field input:focus{border-color:var(--rose);}
+.btn-primary{width:100%;padding:0.9rem;background:linear-gradient(135deg,#e8496a,#f472b6);color:white;border:none;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(232,73,106,0.3);}
+.err{color:#f87171;font-size:0.78rem;text-align:center;margin-top:0.5rem;display:none;}
+
+/* داشبورد */
+#dashboard{display:none;}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0.9rem 1.2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.brand{font-family:'Playfair Display',serif;font-size:1.2rem;background:linear-gradient(135deg,#e8496a,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.user-name{font-size:0.8rem;color:var(--muted);}
+.logout-btn{padding:0.4rem 0.8rem;background:rgba(232,73,106,0.1);border:1px solid var(--border);border-radius:8px;color:var(--rose);font-family:'Tajawal',sans-serif;font-size:0.78rem;cursor:pointer;}
+
+.tabs{display:flex;gap:0.5rem;padding:1rem;overflow-x:auto;}
+.tab{padding:0.55rem 1.1rem;border-radius:999px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Tajawal',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.tab.active{background:linear-gradient(135deg,#e8496a,#f472b6);color:white;border-color:transparent;}
+
+.page{display:none;padding:1rem;}
+.page.active{display:block;}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:1.2rem;margin-bottom:1rem;}
+.card-title{font-size:0.9rem;font-weight:800;color:var(--rose);margin-bottom:1rem;}
+
+/* إدخال يومي */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+.fi{display:flex;flex-direction:column;gap:0.3rem;}
+.fi label{font-size:0.72rem;color:var(--muted);font-weight:700;}
+.fi input,.fi select,.fi textarea{padding:0.6rem 0.8rem;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:0.85rem;outline:none;}
+.fi input:focus,.fi select:focus,.fi textarea:focus{border-color:var(--rose);}
+.fi select option{background:#1a0f14;}
+.fi textarea{resize:vertical;min-height:70px;}
+.save-btn{width:100%;padding:0.85rem;background:linear-gradient(135deg,#e8496a,#f472b6);color:white;border:none;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:0.92rem;font-weight:800;cursor:pointer;margin-top:0.8rem;}
+
+/* تقرير */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.7rem;margin-bottom:1rem;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0.9rem;text-align:center;}
+.stat-num{font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,#e8496a,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-label{font-size:0.65rem;color:var(--muted);margin-top:2px;}
+
+.entry-item{padding:0.65rem 0.9rem;background:rgba(255,255,255,0.03);border-radius:10px;margin-bottom:0.5rem;font-size:0.78rem;display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;}
+.badge{padding:0.15rem 0.5rem;border-radius:999px;font-size:0.65rem;font-weight:800;}
+.bg{background:rgba(34,197,94,0.15);color:#22c55e;}
+.bb{background:rgba(59,130,246,0.15);color:#60a5fa;}
+.by{background:rgba(245,158,11,0.15);color:#fbbf24;}
+.br{background:rgba(232,73,106,0.15);color:#f87171;}
+
+/* رسم الوزن */
+.weight-chart-wrap{background:white;border-radius:14px;padding:1rem;margin-top:0.5rem;}
+
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0.7rem 1.3rem;font-size:0.85rem;font-weight:700;z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div>
+
+<!-- تسجيل الدخول -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="logo">
+      <div style="font-size:2rem;margin-bottom:0.3rem;">✨</div>
+      <div class="logo-en">SHINE</div>
+      <div style="font-size:0.8rem;color:var(--muted);margin-top:0.2rem;">بوابة المشتركة</div>
+    </div>
+    <div class="field">
+      <label>رقم الهاتف</label>
+      <input type="tel" id="loginPhone" placeholder="07xxxxxxxxx" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="field">
+      <label>كلمة السر</label>
+      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-primary" onclick="doLogin()" id="loginBtn">🔐 دخول</button>
+    <div class="err" id="loginErr"></div>
+    <div style="text-align:center;margin-top:1rem;font-size:0.75rem;color:var(--muted);">
+      ليس لديكِ حساب؟ <a href="index.html" style="color:var(--rose);">سجّلي هنا</a>
+    </div>
+  </div>
+</div>
+
+<!-- الداشبورد -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="brand">✨ SHINE</div>
+    <div style="display:flex;align-items:center;gap:0.8rem;">
+      <span class="user-name" id="userName"></span>
+      <button class="logout-btn" onclick="doLogout()">خروج</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('daily')">🥗 الإدخال اليومي</button>
+    <button class="tab" onclick="switchTab('report')">📊 تقريري</button>
+    <button class="tab" onclick="switchTab('weight')">⚖️ منحنى الوزن</button>
+  </div>
+
+  <!-- إدخال يومي -->
+  <div class="page active" id="page-daily">
+    <div class="card">
+      <div class="card-title">📋 إدخال اليوم</div>
+      <div class="fi" style="margin-bottom:0.8rem;">
+        <label>التاريخ</label>
+        <input type="date" id="eDate">
+      </div>
+      <div class="grid-2" style="margin-bottom:0.7rem;">
+        <div class="fi"><label>الوزن (كغ)</label><input type="number" id="eWeight" step="0.1" placeholder="71.5"></div>
+        <div class="fi"><label>الماء (لتر)</label><input type="number" id="eWater" step="0.1" placeholder="2"></div>
+      </div>
+      <div class="fi" style="margin-bottom:0.7rem;">
+        <label>الالتزام</label>
+        <select id="eCommit">
+          <option value="ممتاز">ممتاز ⭐</option>
+          <option value="جيد">جيد 👍</option>
+          <option value="متوسط">متوسط 🆗</option>
+          <option value="ضعيف">ضعيف 😔</option>
+        </select>
+      </div>
+      <div class="grid-2" style="margin-bottom:0.7rem;">
+        <div class="fi"><label>الفطور</label><input type="text" id="eBreakfast" placeholder="بروتين / كارب"></div>
+        <div class="fi"><label>الغداء</label><input type="text" id="eLunch" placeholder="دجاج / خضار"></div>
+      </div>
+      <div class="grid-2" style="margin-bottom:0.7rem;">
+        <div class="fi"><label>العشاء</label><input type="text" id="eDinner" placeholder="شوربة"></div>
+        <div class="fi"><label>السناك</label><input type="text" id="eSnack" placeholder="مكسرات"></div>
+      </div>
+      <div class="fi" style="margin-bottom:0.7rem;">
+        <label>النشاط الرياضي</label>
+        <input type="text" id="eSport" placeholder="مشي 30 دقيقة">
+      </div>
+      <div class="fi" style="margin-bottom:0.5rem;">
+        <label>ملاحظات</label>
+        <textarea id="eNotes" placeholder="أي ملاحظة..."></textarea>
+      </div>
+      <button class="save-btn" onclick="saveEntry()">💾 حفظ إدخال اليوم</button>
+    </div>
+
+    <!-- آخر إدخالات -->
+    <div class="card">
+      <div class="card-title">📅 آخر إدخالاتي</div>
+      <div id="recentEntries"></div>
+    </div>
+  </div>
+
+  <!-- تقرير -->
+  <div class="page" id="page-report">
+    <div class="stat-grid" id="myStats"></div>
+    <div class="card">
+      <div class="card-title">📋 سجل كامل</div>
+      <div id="fullLog"></div>
+    </div>
+  </div>
+
+  <!-- منحنى الوزن -->
+  <div class="page" id="page-weight">
+    <div class="card">
+      <div class="card-title">📉 منحنى وزني</div>
+      <div style="position:relative;height:250px;">
+        <canvas id="myWeightChart"></canvas>
+      </div>
+    </div>
+    <div class="card" id="weightStats"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let ME = null, MY_ENTRIES = [];
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
+
+async function doLogin(){
+  const phone=document.getElementById('loginPhone').value.trim();
+  const pass =document.getElementById('loginPass').value.trim();
+  if(!phone||!pass){showErr('أدخلي رقم الهاتف وكلمة السر');return;}
+  const btn=document.getElementById('loginBtn');
+  btn.textContent='⏳ جاري الدخول...';btn.disabled=true;
+  try{
+    const r=await fetch('/.netlify/functions/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,password:pass})});
+    const d=await r.json();
+    if(!r.ok){showErr(d.error||'خطأ في تسجيل الدخول');btn.textContent='🔐 دخول';btn.disabled=false;return;}
+    ME=d.sub; MY_ENTRIES=d.entries||[];
+    localStorage.setItem('shine_sub',JSON.stringify(ME));
+    localStorage.setItem('shine_entries',JSON.stringify(MY_ENTRIES));
+    showDashboard();
+  }catch(e){showErr('خطأ في الاتصال');btn.textContent='🔐 دخول';btn.disabled=false;}
+}
+
+function showErr(msg){const e=document.getElementById('loginErr');e.textContent=msg;e.style.display='block';}
+
+function showDashboard(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  document.getElementById('userName').textContent=ME.name;
+  document.getElementById('eDate').value=new Date().toISOString().split('T')[0];
+  renderRecent();renderReport();renderWeightChart();
+}
+
+function doLogout(){
+  localStorage.removeItem('shine_sub');
+  localStorage.removeItem('shine_entries');
+  ME=null;MY_ENTRIES=[];
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('loginBtn').textContent='🔐 دخول';
+  document.getElementById('loginBtn').disabled=false;
+  document.getElementById('loginPhone').value='';
+  document.getElementById('loginPass').value='';
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('page-'+tab).classList.add('active');
+}
+
+async function saveEntry(){
+  if(!ME){return;}
+  const entry={
+    sub_id:ME.id,
+    date:document.getElementById('eDate').value,
+    weight:parseFloat(document.getElementById('eWeight').value)||null,
+    water:parseFloat(document.getElementById('eWater').value)||null,
+    commit:document.getElementById('eCommit').value,
+    breakfast:document.getElementById('eBreakfast').value.trim()||null,
+    lunch:document.getElementById('eLunch').value.trim()||null,
+    dinner:document.getElementById('eDinner').value.trim()||null,
+    snack:document.getElementById('eSnack').value.trim()||null,
+    sport:document.getElementById('eSport').value.trim()||null,
+    notes:document.getElementById('eNotes').value.trim()||null,
+  };
+  try{
+    const r=await fetch('/.netlify/functions/entry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});
+    if(r.ok){
+      // تحديث محلي
+      const idx=MY_ENTRIES.findIndex(e=>e.date===entry.date);
+      if(idx>-1)MY_ENTRIES[idx]=entry;else MY_ENTRIES.unshift(entry);
+      MY_ENTRIES.sort((a,b)=>b.date.localeCompare(a.date));
+      localStorage.setItem('shine_entries',JSON.stringify(MY_ENTRIES));
+      toast('✅ تم حفظ إدخال اليوم');
+      renderRecent();renderReport();renderWeightChart();
+    }else toast('⚠️ خطأ في الحفظ');
+  }catch(e){toast('⚠️ خطأ في الاتصال');}
+}
+
+function renderRecent(){
+  const wrap=document.getElementById('recentEntries');
+  const last5=MY_ENTRIES.slice(0,5);
+  const colors={ممتاز:'bg',جيد:'bb',متوسط:'by',ضعيف:'br'};
+  wrap.innerHTML=last5.length?last5.map(e=>`
+    <div class="entry-item">
+      <span style="color:var(--muted);min-width:75px;">${fmtDate(e.date)}</span>
+      ${e.weight?`<span>⚖️ ${e.weight} كغ</span>`:''}
+      ${e.water?`<span>💧 ${e.water} ل</span>`:''}
+      <span class="badge ${colors[e.commit]||''}">${e.commit||'—'}</span>
+      ${e.breakfast?`<span style="color:var(--muted);font-size:0.72rem;">🌅 ${e.breakfast}</span>`:''}
+    </div>`).join(''):'<div style="text-align:center;color:var(--muted);padding:1rem;font-size:0.85rem;">لا توجد إدخالات بعد</div>';
+}
+
+function renderReport(){
+  const entries=MY_ENTRIES;
+  const weights=entries.filter(e=>e.weight).map(e=>e.weight);
+  const lastW=weights.length?weights[0]:parseFloat(ME.weight);
+  const loss=(parseFloat(ME.weight)-lastW).toFixed(1);
+  const exPct=entries.length?Math.round(entries.filter(e=>e.commit==='ممتاز').length/entries.length*100):0;
+  const avgW=entries.filter(e=>e.water).length?(entries.reduce((a,e)=>a+(parseFloat(e.water)||0),0)/entries.filter(e=>e.water).length).toFixed(1):'—';
+  document.getElementById('myStats').innerHTML=[
+    {icon:'⚖️',val:lastW+'كغ',label:'الوزن الحالي',c:'#e8496a'},
+    {icon:parseFloat(loss)>0?'📉':'📈',val:(parseFloat(loss)>0?'↓':'↑')+Math.abs(loss)+'كغ',label:'إجمالي التغيير',c:parseFloat(loss)>0?'#22c55e':'#f87171'},
+    {icon:'💯',val:exPct+'%',label:'التزام ممتاز',c:'#7c3aed'},
+    {icon:'💧',val:avgW+'ل',label:'متوسط الماء',c:'#0284c7'},
+  ].map(s=>`<div class="stat"><div style="font-size:1.3rem;">${s.icon}</div><div class="stat-num" style="background:${s.c};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">${s.val}</div><div class="stat-label">${s.label}</div></div>`).join('');
+  const colors={ممتاز:'bg',جيد:'bb',متوسط:'by',ضعيف:'br'};
+  document.getElementById('fullLog').innerHTML=entries.length?entries.map(e=>`
+    <div class="entry-item">
+      <span style="color:var(--muted);min-width:75px;">${fmtDate(e.date)}</span>
+      ${e.weight?`<span>⚖️ ${e.weight}كغ</span>`:''}
+      ${e.water?`<span>💧 ${e.water}ل</span>`:''}
+      <span class="badge ${colors[e.commit]||''}">${e.commit||'—'}</span>
+      ${e.sport?`<span>🏃 ${e.sport}</span>`:''}
+    </div>`).join(''):'<div style="text-align:center;color:var(--muted);padding:1rem;">لا توجد إدخالات</div>';
+}
+
+function renderWeightChart(){
+  const canvas=document.getElementById('myWeightChart');
+  const ctx=canvas.getContext('2d');
+  const entries=[...MY_ENTRIES].filter(e=>e.weight).sort((a,b)=>a.date.localeCompare(b.date));
+  const W=canvas.parentElement.offsetWidth||340,H=250;
+  canvas.width=W*devicePixelRatio;canvas.height=H*devicePixelRatio;
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+  if(!entries.length){ctx.fillStyle='#aaa';ctx.font='13px Tajawal';ctx.textAlign='center';ctx.fillText('لا توجد بيانات وزن',W/2,H/2);return;}
+  const pad={t:20,r:20,b:36,l:50},w=W-pad.l-pad.r,h=H-pad.t-pad.b;
+  const vals=entries.map(e=>e.weight);
+  const target=parseFloat(ME.target);
+  const all=[...vals,target];
+  const minV=Math.min(...all)-1.5,maxV=Math.max(...all)+1.5;
+  const n=entries.length;
+  const xP=i=>pad.l+(n>1?(i/(n-1))*w:w/2);
+  const yP=v=>pad.t+h-((v-minV)/(maxV-minV))*h;
+  // شبكة
+  ctx.strokeStyle='rgba(232,73,106,0.07)';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad.t+(i/4)*h;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+w,y);ctx.stroke();const val=maxV-(i/4)*(maxV-minV);ctx.fillStyle='#9ca3af';ctx.font='10px Tajawal';ctx.textAlign='right';ctx.fillText(val.toFixed(1),pad.l-6,y+4);}
+  // هدف
+  const ty=yP(target);ctx.strokeStyle='rgba(245,158,11,0.6)';ctx.setLineDash([7,5]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(pad.l,ty);ctx.lineTo(pad.l+w,ty);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#f59e0b';ctx.font='bold 10px Tajawal';ctx.textAlign='left';ctx.fillText('🎯 '+target,pad.l+w+3,ty+4);
+  // تعبئة
+  const grad=ctx.createLinearGradient(0,pad.t,0,pad.t+h);grad.addColorStop(0,'rgba(232,73,106,0.2)');grad.addColorStop(1,'rgba(232,73,106,0)');
+  ctx.beginPath();ctx.moveTo(xP(0),pad.t+h);entries.forEach((e,i)=>ctx.lineTo(xP(i),yP(e.weight)));ctx.lineTo(xP(n-1),pad.t+h);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+  // خط
+  ctx.strokeStyle='#e8496a';ctx.lineWidth=2.5;ctx.lineJoin='round';ctx.beginPath();entries.forEach((e,i)=>{if(i===0)ctx.moveTo(xP(i),yP(e.weight));else ctx.lineTo(xP(i),yP(e.weight));});ctx.stroke();
+  // نقاط
+  entries.forEach((e,i)=>{const last=i===n-1;ctx.beginPath();ctx.arc(xP(i),yP(e.weight),last?6:3.5,0,Math.PI*2);ctx.fillStyle=last?'#e8496a':'white';ctx.fill();ctx.strokeStyle='#e8496a';ctx.lineWidth=2;ctx.stroke();});
+  // تواريخ
+  const step=Math.max(1,Math.floor(n/5));
+  entries.forEach((e,i)=>{if(i%step===0||i===n-1){ctx.fillStyle='#9ca3af';ctx.font='9px Tajawal';ctx.textAlign='center';ctx.fillText(fmtDate(e.date).slice(0,5),xP(i),pad.t+h+16);}});
+  // إحصائيات
+  const lastW=vals[vals.length-1],firstW=parseFloat(ME.weight);
+  const loss=(firstW-lastW).toFixed(1);
+  const pct=Math.abs(firstW-target)>0?Math.min(100,Math.round(Math.abs(firstW-lastW)/Math.abs(firstW-target)*100)):100;
+  document.getElementById('weightStats').innerHTML=`
+    <div style="display:flex;justify-content:space-around;text-align:center;flex-wrap:wrap;gap:0.5rem;">
+      <div><div style="font-size:1.2rem;font-weight:900;color:#e8496a;">${lastW} كغ</div><div style="font-size:0.65rem;color:var(--muted);">الحالي</div></div>
+      <div><div style="font-size:1.2rem;font-weight:900;color:${parseFloat(loss)>0?'#22c55e':'#f87171'};">${parseFloat(loss)>0?'↓':'↑'}${Math.abs(loss)} كغ</div><div style="font-size:0.65rem;color:var(--muted);">التغيير</div></div>
+      <div><div style="font-size:1.2rem;font-weight:900;color:#f59e0b;">${pct}%</div><div style="font-size:0.65rem;color:var(--muted);">من الهدف</div></div>
+    </div>`;
+}
+
+// تحقق من جلسة محفوظة
+window.addEventListener('load',()=>{
+  const s=localStorage.getItem('shine_sub');
+  const e=localStorage.getItem('shine_entries');
+  if(s){ME=JSON.parse(s);MY_ENTRIES=JSON.parse(e||'[]');showDashboard();}
+});
+</script>
+</body>
+</html>
